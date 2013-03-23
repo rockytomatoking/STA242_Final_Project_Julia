@@ -1,0 +1,79 @@
+# Code for Final project 
+
+pwd() # get the current directory
+cd("Dropbox/Winter 2013/STA 242/Plane Data") # change to the target directory / need to use double quote
+ls() # shows the files in the current directory
+
+# The above functions basically work exactly like the shell commands, with arguments inside the parenthesis.
+
+function fcount(year, airport, Origin)
+  location = 18-int(Origin)
+	countarray = readlines(`cut -f $location -d , $year.csv `|` egrep $airport `|` sort `|` uniq -c`)
+	counting = int(countarray[1][1:endof(countarray[1])-5])
+	return counting 
+end
+
+# Can have input saved as regular variable and then called to the destination using $ 
+
+# using backticks for the commands inside the run() or readlines()
+# pipelines are not allowed inside the backticks
+
+years = 1987 
+#years = [1987:2008]
+countofOrigin = readlines(`cut -f 17 -d , $years.csv `|` egrep '(SMF|OAK|SFO|LAX)' `|` sort `|` uniq -c`)
+countofDestination = readlines(`cut -f 18 -d , $years.csv `|` egrep '(SMF|OAK|SFO|LAX)' `|` sort `|` uniq -c`
+
+tic()
+run(`cut -f 17 -d , 1987.csv `|` egrep '(SMF|OAK|SFO|LAX)' `|` sort `|` uniq -c`)
+toc() 
+# timer
+
+function allcount(airport, Origin)
+	counting = fcount([1987:2000,2003:2008])
+end
+# this function give all the flight leaving airport 
+
+function allcount2(airport, Origin)
+	count = 0
+	for i = 1987:2000
+		count += fcount(i, airport, Origin)
+	end
+	for i = 2003:2008
+		count += fcount(i, airport, Origin)
+	end
+	return count
+end
+# Same function, different approach. This time updating the counts 
+
+allcount2(["OAK", "SFO", "SMF", "LAX"], true)
+fcount([1987:2000,2003:2008], ["OAK", "SFO", "SMF", "LAX"], true)
+
+function summarydelay(airport, year)
+	record = fixme(readlines(`egrep $airport $year.csv` | `cut -f 15 -d ,`))
+	summary = [mean(record), std(record), nnz(record)]
+	return summary 
+end
+# This function witll generate an array that includes the mean, std, and # of delay 
+
+tic()
+summarydelay("SFO", [1987:2000,2003:2008])
+toc()
+
+function fixme(myarray)
+	newarray = zeros(Int,size(myarray)[1])
+	for i = 1:size(myarray)[1]
+		if myarray[i] != "NA\n"
+			newarray[i] = int(myarray[i])
+		end
+	end
+	return newarray
+end
+# This function takes in a shell output and transform it into an integer array.
+
+
+function histogram(airport, year)
+	hist(fixme(readlines(`egrep $airport $year.csv` | `cut -f 15 -d ,`)))
+end
+# shows the histogram of delay in each airport
+
+histogram("SFO", [1987:2000,2003:2008])
